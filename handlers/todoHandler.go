@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 
 	"github.com/uebung/models"
@@ -22,14 +23,13 @@ func NewToDoHandler(t ToDoSource) *ToDoHandler {
 func (t *ToDoHandler) GetToDos(w http.ResponseWriter, r *http.Request) {
 	todos, err := t.ToDos.GetTasks()
 	if err != nil {
-		http.Error(w, "Tasks not found", http.StatusNotFound)
+		http.Error(w, "Tasks could not be loaded", http.StatusInternalServerError)
+		slog.Error("error loading todos", "error", err)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(todos)
-	if err != nil {
-		http.Error(w, "error encoding json", http.StatusInternalServerError)
-		return
+	if err = json.NewEncoder(w).Encode(todos); err != nil {
+		slog.Error("could not encode todos", "error", err)
 	}
 }
