@@ -28,6 +28,7 @@ func main() {
 	taskHandler := handlers.NewToDoHandler(storeTasks)
 
 	mux.HandleFunc("GET /api/todos", taskHandler.GetToDos)
+	mux.HandleFunc("GET /api/todos/{id}", taskHandler.GetToDoByID)
 
 	cors := middleware.CorsHandler("*")
 	server := &http.Server{

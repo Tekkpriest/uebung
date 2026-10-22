@@ -1,8 +1,14 @@
 package data
 
-import "github.com/uebung/models"
+import (
+	"errors"
+	"sync"
+
+	"github.com/uebung/models"
+)
 
 type StoreTasks struct {
+	mu    sync.RWMutex
 	tasks []models.Task
 }
 
@@ -29,5 +35,20 @@ func NewStoreTasks() *StoreTasks {
 }
 
 func (s *StoreTasks) GetTasks() ([]models.Task, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
 	return s.tasks, nil
+}
+
+func (s *StoreTasks) GetTaskByID(id int) (models.Task, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	for _, task := range s.tasks {
+		if task.ID == id {
+			return task, nil
+		}
+	}
+
+	return models.Task{}, errors.New("task not found")
 }
