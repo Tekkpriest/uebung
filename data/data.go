@@ -7,6 +7,10 @@ import (
 	"github.com/uebung/models"
 )
 
+var (
+	ErrNotFound = errors.New("task not found")
+)
+
 type StoreTasks struct {
 	mu    sync.RWMutex
 	tasks []models.Task
@@ -50,5 +54,5 @@ func (s *StoreTasks) GetTaskByID(id int) (models.Task, error) {
 		}
 	}
 
-	return models.Task{}, errors.New("task not found")
+	return models.Task{}, ErrNotFound
 }

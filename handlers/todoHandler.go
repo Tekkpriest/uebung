@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/uebung/data"
 	"github.com/uebung/models"
 )
 
@@ -48,7 +49,7 @@ func (t *ToDoHandler) GetToDoByID(w http.ResponseWriter, r *http.Request) {
 
 	todo, err := t.ToDos.GetTaskByID(id)
 	if err != nil {
-		if errors.Is(err, errors.New("task not found")) {
+		if errors.Is(err, data.ErrNotFound) {
 			http.Error(w, "todo not found", http.StatusNotFound)
 			return
 		}
